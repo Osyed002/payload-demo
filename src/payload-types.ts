@@ -72,26 +72,44 @@ export interface Config {
     media: Media;
     categories: Category;
     users: User;
+    sliders: Slider;
+    galleries: Gallery;
+    products: Product;
+    variants: Variant;
+    carts: Cart;
+    quotes: Quote;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
     search: Search;
+    'payload-folders': FolderInterface;
     'payload-jobs': PayloadJob;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
     'payload-migrations': PayloadMigration;
   };
-  collectionsJoins: {};
+  collectionsJoins: {
+    'payload-folders': {
+      documentsAndFolders: 'payload-folders' | 'media';
+    };
+  };
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    sliders: SlidersSelect<false> | SlidersSelect<true>;
+    galleries: GalleriesSelect<false> | GalleriesSelect<true>;
+    products: ProductsSelect<false> | ProductsSelect<true>;
+    variants: VariantsSelect<false> | VariantsSelect<true>;
+    carts: CartsSelect<false> | CartsSelect<true>;
+    quotes: QuotesSelect<false> | QuotesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
     search: SearchSelect<false> | SearchSelect<true>;
+    'payload-folders': PayloadFoldersSelect<false> | PayloadFoldersSelect<true>;
     'payload-jobs': PayloadJobsSelect<false> | PayloadJobsSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -276,6 +294,7 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -348,13 +367,37 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders".
+ */
+export interface FolderInterface {
+  id: number;
+  name: string;
+  folder?: (number | null) | FolderInterface;
+  documentsAndFolders?: {
+    docs?: (
+      | {
+          relationTo?: 'payload-folders';
+          value: number | FolderInterface;
+        }
+      | {
+          relationTo?: 'media';
+          value: number | Media;
+        }
+    )[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
 export interface Category {
   id: number;
-  title: string;
-  slug?: string | null;
-  slugLock?: boolean | null;
+  name: string;
+  slug: string;
   parent?: (number | null) | Category;
   breadcrumbs?:
     | {
@@ -736,6 +779,139 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sliders".
+ */
+export interface Slider {
+  id: number;
+  title: string;
+  images?: (number | Media)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries".
+ */
+export interface Gallery {
+  id: number;
+  title: string;
+  images?: (number | Media)[] | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manage your e-commerce products here.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products".
+ */
+export interface Product {
+  id: number;
+  name: string;
+  description?: {
+    root: {
+      type: string;
+      children: {
+        type: string;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  /**
+   * Base price of the product in USD.
+   */
+  price: number;
+  sku: string;
+  stockQuantity?: number | null;
+  images?:
+    | {
+        image: number | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Associate variants (e.g., size, color) with this product.
+   */
+  variants?: (number | Variant)[] | null;
+  options?:
+    | {
+        name: string;
+        values?:
+          | {
+              value: string;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Manage product variants (e.g., different sizes or colors).
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "variants".
+ */
+export interface Variant {
+  id: number;
+  product: number | Product;
+  sku: string;
+  /**
+   * Price difference from the base product price (e.g., +10 for premium variant).
+   */
+  priceAdjustment?: number | null;
+  stockQuantity?: number | null;
+  options?:
+    | {
+        name: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts".
+ */
+export interface Cart {
+  id: number;
+  user: number | User;
+  items?:
+    | {
+        product: number | Product;
+        variantSKU?: string | null;
+        quantity: number;
+        id?: string | null;
+      }[]
+    | null;
+  status?: ('active' | 'converted') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotes".
+ */
+export interface Quote {
+  id: number;
+  cart: number | Cart;
+  message?: string | null;
+  status?: ('pending' | 'sent' | 'accepted' | 'rejected') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -928,6 +1104,30 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'sliders';
+        value: number | Slider;
+      } | null)
+    | ({
+        relationTo: 'galleries';
+        value: number | Gallery;
+      } | null)
+    | ({
+        relationTo: 'products';
+        value: number | Product;
+      } | null)
+    | ({
+        relationTo: 'variants';
+        value: number | Variant;
+      } | null)
+    | ({
+        relationTo: 'carts';
+        value: number | Cart;
+      } | null)
+    | ({
+        relationTo: 'quotes';
+        value: number | Quote;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -942,6 +1142,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'search';
         value: number | Search;
+      } | null)
+    | ({
+        relationTo: 'payload-folders';
+        value: number | FolderInterface;
       } | null)
     | ({
         relationTo: 'payload-jobs';
@@ -1162,6 +1366,7 @@ export interface PostsSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   caption?: T;
+  folder?: T;
   updatedAt?: T;
   createdAt?: T;
   url?: T;
@@ -1253,9 +1458,8 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  title?: T;
+  name?: T;
   slug?: T;
-  slugLock?: T;
   parent?: T;
   breadcrumbs?:
     | T
@@ -1290,6 +1494,106 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sliders_select".
+ */
+export interface SlidersSelect<T extends boolean = true> {
+  title?: T;
+  images?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "galleries_select".
+ */
+export interface GalleriesSelect<T extends boolean = true> {
+  title?: T;
+  images?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "products_select".
+ */
+export interface ProductsSelect<T extends boolean = true> {
+  name?: T;
+  description?: T;
+  price?: T;
+  sku?: T;
+  stockQuantity?: T;
+  images?:
+    | T
+    | {
+        image?: T;
+        id?: T;
+      };
+  variants?: T;
+  options?:
+    | T
+    | {
+        name?: T;
+        values?:
+          | T
+          | {
+              value?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "variants_select".
+ */
+export interface VariantsSelect<T extends boolean = true> {
+  product?: T;
+  sku?: T;
+  priceAdjustment?: T;
+  stockQuantity?: T;
+  options?:
+    | T
+    | {
+        name?: T;
+        value?: T;
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "carts_select".
+ */
+export interface CartsSelect<T extends boolean = true> {
+  user?: T;
+  items?:
+    | T
+    | {
+        product?: T;
+        variantSKU?: T;
+        quantity?: T;
+        id?: T;
+      };
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "quotes_select".
+ */
+export interface QuotesSelect<T extends boolean = true> {
+  cart?: T;
+  message?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1480,6 +1784,17 @@ export interface SearchSelect<T extends boolean = true> {
         title?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "payload-folders_select".
+ */
+export interface PayloadFoldersSelect<T extends boolean = true> {
+  name?: T;
+  folder?: T;
+  documentsAndFolders?: T;
   updatedAt?: T;
   createdAt?: T;
 }

@@ -22,7 +22,9 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
   },
   "dependencies": {
+    "@faceless-ui/modal": "3.0.0-beta.2",
     "@payloadcms/admin-bar": "3.47.0",
+    "@payloadcms/db-sqlite": "3.47.0",
     "@payloadcms/live-preview-react": "3.47.0",
     "@payloadcms/next": "3.47.0",
     "@payloadcms/payload-cloud": "3.47.0",
@@ -52,9 +54,9 @@
     "react-dom": "19.1.0",
     "react-hook-form": "7.45.4",
     "sharp": "0.34.2",
+    "swiper": "^11.2.10",
     "tailwind-merge": "^2.3.0",
-    "tailwindcss-animate": "^1.0.7",
-    "@payloadcms/db-sqlite": "3.47.0"
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

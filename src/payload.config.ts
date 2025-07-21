@@ -6,7 +6,7 @@ import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { Categories } from './collections/Categories'
+import { Categories } from './collections/_Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -16,11 +16,27 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { Sliders } from './collections/Sliders'
+import { Galleries } from './collections/Galleries'
+import { Products } from './collections/Products'
+import { Carts } from './collections/Carts'
+import { Quotes } from './collections/Quotes'
+import { Variants } from './collections/Variants'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  folders: {
+    debug: true, // optional
+    collectionOverrides: [
+      async ({ collection }) => {
+        return collection
+      },
+    ], // optional
+    fieldName: 'folder', // optional
+    slug: 'payload-folders', // optional
+  },
   admin: {
     components: {
       // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
@@ -64,7 +80,7 @@ export default buildConfig({
       url: process.env.DATABASE_URI || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Media, Categories, Users, Sliders, Galleries, Products, Variants, Carts, Quotes],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer],
   plugins: [

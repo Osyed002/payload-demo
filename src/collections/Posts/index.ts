@@ -7,6 +7,13 @@ import {
   HorizontalRuleFeature,
   InlineToolbarFeature,
   lexicalEditor,
+  EXPERIMENTAL_TableFeature,
+  AlignFeature,
+  ChecklistFeature,
+  BlockquoteFeature,
+  OrderedListFeature,
+  InlineCodeFeature,
+  UnorderedListFeature
 } from '@payloadcms/richtext-lexical'
 
 import { authenticated } from '../../access/authenticated'
@@ -26,6 +33,8 @@ import {
   PreviewField,
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from '@/fields/slug'
+import { GalleryBlock } from '@/blocks/GalleryBlock/Component'
+import { SliderBlock } from '@/blocks/SliderBlock/Component'
 
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
@@ -91,11 +100,18 @@ export const Posts: CollectionConfig<'posts'> = {
                 features: ({ rootFeatures }) => {
                   return [
                     ...rootFeatures,
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
+                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4', 'h5', 'h6'] }),
+                    BlocksFeature({ blocks: [Banner, Code, MediaBlock, SliderBlock, GalleryBlock] }),
                     FixedToolbarFeature(),
                     InlineToolbarFeature(),
                     HorizontalRuleFeature(),
+                    EXPERIMENTAL_TableFeature(),
+                    AlignFeature(),
+                    ChecklistFeature(),
+                    BlockquoteFeature(),
+                    OrderedListFeature(),
+                    InlineCodeFeature(),
+                    UnorderedListFeature(),
                   ]
                 },
               }),

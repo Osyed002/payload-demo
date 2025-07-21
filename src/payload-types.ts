@@ -396,8 +396,9 @@ export interface FolderInterface {
  */
 export interface Category {
   id: number;
-  name: string;
-  slug: string;
+  title: string;
+  slug?: string | null;
+  slugLock?: boolean | null;
   parent?: (number | null) | Category;
   breadcrumbs?:
     | {
@@ -1458,8 +1459,9 @@ export interface MediaSelect<T extends boolean = true> {
  * via the `definition` "categories_select".
  */
 export interface CategoriesSelect<T extends boolean = true> {
-  name?: T;
+  title?: T;
   slug?: T;
+  slugLock?: T;
   parent?: T;
   breadcrumbs?:
     | T

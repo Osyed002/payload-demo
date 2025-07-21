@@ -5,8 +5,6 @@ import sharp from 'sharp' // sharp-import
 import path from 'path'
 import { buildConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
-
-import { Categories } from './collections/_Categories'
 import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
@@ -22,6 +20,7 @@ import { Products } from './collections/Products'
 import { Carts } from './collections/Carts'
 import { Quotes } from './collections/Quotes'
 import { Variants } from './collections/Variants'
+import { Categories } from './collections/Categories'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
